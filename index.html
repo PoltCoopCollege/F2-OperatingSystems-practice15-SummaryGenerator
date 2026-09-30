@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Звіт з практичної роботи №15 — Cloudflare DNS/BGP</title>
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg: #f1f5f9;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --focus-ring: #93c5fd;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            max-width: 920px;
+            width: 100%;
+        }
+
+        .header-card {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            margin-bottom: 24px;
+        }
+
+        .header-card h1 {
+            margin: 0 0 10px 0;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .header-card p {
+            margin: 0;
+            opacity: 0.85;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        /* Стилі карток-секцій */
+        .card {
+            background: var(--card-bg);
+            padding: 24px 28px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            margin-top: 0;
+            margin-bottom: 18px;
+            font-size: 17px;
+            color: #1e293b;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group:last-child {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            font-size: 13px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+
+        input[type="text"], textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 14px;
+            color: var(--text-main);
+            background-color: #f8fafc;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        input[type="text"]:focus, textarea:focus {
+            outline: none;
+            background-color: #ffffff;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--focus-ring);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 90px;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+
+        @media (max-width: 640px) {
+            .grid-2 { grid-template-columns: 1fr; }
+        }
+
+        /* Кнопка друку */
+        .btn-group {
+            display: flex;
+            margin-top: 32px;
+            margin-bottom: 24px;
+            justify-content: center;
+        }
+
+        button {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background-color: var(--primary);
+            color: white;
+            transition: all 0.2s ease;
+            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+        }
+
+        button:hover {
+            background-color: var(--primary-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 12px -2px rgba(37, 99, 235, 0.3);
+        }
+
+        /* Підвал */
+        .footer-badge {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer-badge span {
+            font-weight: 600;
+            background: linear-gradient(135deg, #2563eb, #9333ea);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Налаштування стилів ДРУКУ / PDF */
+        @media print {
+            body {
+                background: white;
+                padding: 0;
+            }
+            .container {
+                max-width: 100%;
+            }
+            .header-card {
+                background: none;
+                color: black;
+                padding: 0;
+                box-shadow: none;
+                border-bottom: 2px solid black;
+                border-radius: 0;
+                margin-bottom: 20px;
+            }
+            .card {
+                box-shadow: none;
+                border: none;
+                padding: 0;
+                margin-bottom: 24px;
+            }
+            .card h2 {
+                border-bottom: 1px solid black;
+                color: black;
+            }
+            .btn-group, .footer-badge {
+                display: none !important;
+            }
+            input[type="text"], textarea {
+                border: none;
+                padding: 0;
+                background: transparent;
+                width: 100%;
+                font-size: 13px;
+            }
+            label {
+                color: black;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    
+    <!-- Шапка -->
+    <div class="header-card">
+        <h1>Звіт з практичної роботи №15</h1>
+        <p><strong>Тема:</strong> Аналіз системного збою Cloudflare (DNS / BGP)</p>
+    </div>
+
+    <!-- Загальна інформація -->
+    <div class="card">
+        <h2>👤 Загальна інформація</h2>
+        <div class="grid-2">
+            <div class="form-group">
+                <label>Студент (ПІБ)</label>
+                <input type="text" placeholder="Іванов Іван Іванович">
+            </div>
+            <div class="form-group">
+                <label>Академічна група</label>
+                <input type="text" placeholder="ІПЗ-21">
+            </div>
+        </div>
+    </div>
+
+    <!-- Завдання 1 -->
+    <div class="card">
+        <h2>🔍 Завдання 1. Ідентифікація та Загальний Опис Інциденту</h2>
+        <div class="form-group">
+            <label>Обраний інцидент (Дата, тривалість, причина)</label>
+            <input type="text" placeholder="Наприклад: 2 липня 2019 року, ~30 хв, BGP-витік через помилку провайдера">
+        </div>
+        <div class="form-group">
+            <label>Вплив на послуги та користувачів (DNS, CDN, WAF тощо)</label>
+            <textarea placeholder="Опишіть, які саме сервіси постраждали та який відсоток трафіку було втрачено..."></textarea>
+        </div>
+    </div>
+
+    <!-- Завдання 2 -->
+    <div class="card">
+        <h2>🌐 Завдання 2. Аналіз з точки зору DNS (Прикладний рівень)</h2>
+        <div class="form-group">
+            <label>Початковий запит користувача</label>
+            <textarea placeholder="Що відбувається при вводі ім'я домену в браузері..."></textarea>
+        </div>
+        <div class="form-group">
+            <label>Роль DNS-резолвера</label>
+            <textarea placeholder="Як збій вплинув на рекурсивні DNS-сервери (8.8.8.8, ISP)..."></textarea>
+        </div>
+        <div class="form-group">
+            <label>Помилка користувача (SERVFAIL / NXDOMAIN / Timeout)</label>
+            <textarea placeholder="Яку саме помилку бачив користувач та чому..."></textarea>
+        </div>
+        <div class="form-group">
+            <label>TTL та кешування</label>
+            <textarea placeholder="Як TTL записів вплинув на тривалість проблеми..."></textarea>
+        </div>
+    </div>
+
+    <!-- Завдання 3 -->
+    <div class="card">
+        <h2>📡 Завдання 3. Аналіз з точки зору Мережевих протоколів (BGP/Рівень 3)</h2>
+        <div class="grid-2">
+            <div class="form-group">
+                <label>AS-номер Cloudflare</label>
+                <input type="text" placeholder="AS13335">
+            </div>
+            <div class="form-group">
+                <label>AS-номер винуватця / провайдера</label>
+                <input type="text" placeholder="Наприклад: AS39651 (MainStreet Bank) / AS1239 (Sprint)">
+            </div>
+        </div>
+        <div class="form-group" style="margin-top: 16px;">
+            <label>BGP-оголошення та префікси</label>
+            <textarea placeholder="Поясніть поняття префіксу та як його помилкове оголошення перенаправило трафік..."></textarea>
+        </div>
+        <div class="form-group">
+            <label>Концепція «Чорної діри» (Black Hole)</label>
+            <textarea placeholder="Чому трафік зникав без повернення помилки..."></textarea>
+        </div>
+        <div class="form-group">
+            <label>Локальний вплив та статичні маршрути</label>
+            <textarea placeholder="Чи міг інженер провайдера тимчасово прописати static route..."></textarea>
+        </div>
+    </div>
+
+    <!-- Завдання 4 -->
+    <div class="card">
+        <h2>🛡️ Завдання 4. Запобігання та Висновки</h2>
+        <div class="form-group">
+            <label>Реагування та усунення</label>
+            <textarea placeholder="Кроки, здійснені для відновлення працездатності..."></textarea>
+        </div>
+        <div class="form-group">
+            <label>Запобігання (RPKI, BGP Route Filtering)</label>
+            <textarea placeholder="Механізми захисту від подібних витоків у майбутньому..."></textarea>
+        </div>
+        <div class="form-group">
+            <label>Загальний висновок</label>
+            <textarea placeholder="Висновок про важливість багатофакторної валідації змін у критичній інфраструктурі..."></textarea>
+        </div>
+    </div>
+
+    <!-- Кнопка дій -->
+    <div class="btn-group">
+        <button onclick="window.print()">
+            <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+            Зберегти в PDF / Друк
+        </button>
+    </div>
+
+    <!-- Футер -->
+    <div class="footer-badge">
+        Створено за допомогою <span>Gemini</span>
+    </div>
+
+</div>
+
+</body>
+</html>
