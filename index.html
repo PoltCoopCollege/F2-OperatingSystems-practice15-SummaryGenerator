@@ -6,28 +6,30 @@
     <title>Звіт з практичної роботи №15 — ПФКК</title>
     <style>
         :root {
-            /* Фірмова палітра ПФКК */
+            /* Фірмова палітра ПФКК та графітова тема */
+            --bg-graphite: #18181c;
+            --bg-graphite-card: #222228;
             --pfkk-burgundy: #4a151b;
             --pfkk-burgundy-light: #5c1920;
             --pfkk-gold: #f3c868;
             --pfkk-gold-hover: #e2b245;
-            --bg: #f8f6f6;
-            --card-bg: #ffffff;
-            --text-main: #2b2b2b;
-            --text-muted: #666666;
-            --border: #e0d8d8;
-            --focus-ring: #f3c868;
-            --hint-bg: #fffbf0;
+            --text-light: #f3f4f6;
+            --text-muted-dark: #d1d5db;
+            --border-burgundy: #7a232d;
+            --border-gold: rgba(243, 200, 104, 0.3);
+            
+            /* Блок підказок */
+            --hint-bg: rgba(243, 200, 104, 0.08);
             --hint-border: #f3c868;
-            --hint-text: #4a151b;
+            --hint-text: #fde68a;
         }
 
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background-color: var(--bg);
-            color: var(--text-main);
+            font-family: 'Segoe UI', system-ui, -apple-system, Roboto, sans-serif;
+            background-color: var(--bg-graphite);
+            color: var(--text-light);
             margin: 0;
-            padding: 0 0 40px 0;
+            padding: 20px 0 40px 0;
             display: flex;
             justify-content: center;
         }
@@ -35,58 +37,83 @@
         .container {
             max-width: 920px;
             width: 100%;
+            padding: 0 15px;
+            box-sizing: border-box;
         }
 
-        /* Шапка в стилі сайту ПФКК */
+        /* Шапка з чіткою ієрархією */
         .header-card {
-            background-color: var(--pfkk-burgundy);
+            background: linear-gradient(145deg, #4a151b 0%, #2f0d11 100%);
             color: white;
-            padding: 28px 32px;
-            border-radius: 0 0 16px 16px;
-            box-shadow: 0 4px 12px rgba(74, 21, 27, 0.2);
+            padding: 32px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
             margin-bottom: 24px;
+            border: 1px solid var(--border-gold);
             border-bottom: 4px solid var(--pfkk-gold);
         }
 
-        .header-card h1 {
-            margin: 0 0 8px 0;
-            font-size: 24px;
+        .college-badge {
+            display: inline-block;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--pfkk-gold);
+            background: rgba(243, 200, 104, 0.12);
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid rgba(243, 200, 104, 0.3);
+            margin-bottom: 12px;
+        }
+
+        .specialty-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #e5e7eb;
+            margin-bottom: 4px;
+        }
+
+        .subject-title {
+            font-size: 18px;
             font-weight: 700;
             color: var(--pfkk-gold);
+            margin-bottom: 16px;
+        }
+
+        .header-card h1 {
+            margin: 0 0 6px 0;
+            font-size: 26px;
+            font-weight: 800;
+            color: #ffffff;
         }
 
         .header-card p {
             margin: 0;
-            opacity: 0.95;
+            color: var(--text-muted-dark);
             font-size: 15px;
-            line-height: 1.4;
         }
 
-        .header-subtitle {
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: #d1b8b8;
-            margin-bottom: 6px;
-        }
-
-        /* Стилі карток-секцій */
+        /* Картки у бордовій брендовій гамі */
         .card {
-            background: var(--card-bg);
-            padding: 24px 28px;
-            border-radius: 12px;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-            border: 1px solid var(--border);
-            margin-bottom: 20px;
+            background: linear-gradient(160deg, var(--pfkk-burgundy) 0%, #360f13 100%);
+            padding: 26px 30px;
+            border-radius: 14px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border-burgundy);
+            margin-bottom: 22px;
         }
 
         .card h2 {
             margin-top: 0;
-            margin-bottom: 18px;
-            font-size: 17px;
-            color: var(--pfkk-burgundy);
-            border-bottom: 2px solid var(--pfkk-gold);
-            padding-bottom: 8px;
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: var(--pfkk-gold);
+            border-bottom: 1px solid rgba(243, 200, 104, 0.25);
+            padding-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .form-group {
@@ -101,42 +128,46 @@
             display: block;
             font-weight: 700;
             font-size: 13px;
-            color: var(--pfkk-burgundy);
+            color: var(--pfkk-gold);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 6px;
+            letter-spacing: 0.6px;
+            margin-bottom: 8px;
         }
 
-        /* Блок підказок (приховується при друку) */
+        /* Блок підказок */
         .instruction {
             background-color: var(--hint-bg);
-            border-left: 4px solid var(--hint-border);
+            border-left: 3px solid var(--hint-border);
             padding: 10px 14px;
-            border-radius: 0 6px 6px 0;
+            border-radius: 0 8px 8px 0;
             font-size: 13px;
             color: var(--hint-text);
             margin-bottom: 10px;
-            line-height: 1.4;
+            line-height: 1.45;
         }
 
         input[type="text"], textarea {
             width: 100%;
             padding: 12px 14px;
-            border: 1px solid var(--border);
+            border: 1px solid var(--border-burgundy);
             border-radius: 8px;
             box-sizing: border-box;
             font-size: 14px;
-            color: var(--text-main);
-            background-color: #faf8f8;
+            color: #ffffff;
+            background-color: rgba(20, 5, 7, 0.5);
             transition: all 0.2s ease;
             font-family: inherit;
         }
 
+        input[type="text"]::placeholder, textarea::placeholder {
+            color: #9ca3af;
+        }
+
         input[type="text"]:focus, textarea:focus {
             outline: none;
-            background-color: #ffffff;
+            background-color: rgba(20, 5, 7, 0.8);
             border-color: var(--pfkk-gold);
-            box-shadow: 0 0 0 3px rgba(243, 200, 104, 0.4);
+            box-shadow: 0 0 0 3px rgba(243, 200, 104, 0.25);
         }
 
         textarea {
@@ -147,107 +178,121 @@
         .grid-2 {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 16px;
+            gap: 18px;
         }
 
         @media (max-width: 640px) {
             .grid-2 { grid-template-columns: 1fr; }
-            body { padding: 0 10px 20px 10px; }
+            body { padding: 10px 0 20px 0; }
         }
 
-        /* Кнопка друку у стилі фірмового золота ПФКК */
+        /* Кнопка друку */
         .btn-group {
             display: flex;
-            margin-top: 32px;
+            margin-top: 36px;
             margin-bottom: 24px;
             justify-content: center;
         }
 
         button {
-            padding: 14px 32px;
+            padding: 14px 36px;
             border: none;
-            border-radius: 8px;
+            border-radius: 10px;
             font-weight: 700;
             font-size: 16px;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            background-color: var(--pfkk-burgundy);
-            color: var(--pfkk-gold);
-            border: 1px solid var(--pfkk-gold);
+            background-color: var(--pfkk-gold);
+            color: var(--pfkk-burgundy);
             transition: all 0.2s ease;
-            box-shadow: 0 4px 10px rgba(74, 21, 27, 0.25);
+            box-shadow: 0 6px 18px rgba(243, 200, 104, 0.25);
         }
 
         button:hover {
-            background-color: var(--pfkk-burgundy-light);
-            color: #ffffff;
-            transform: translateY(-1px);
+            background-color: var(--pfkk-gold-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 22px rgba(243, 200, 104, 0.35);
         }
 
         /* Підвал */
         .footer-badge {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 24px;
             font-size: 13px;
-            color: var(--text-muted);
+            color: #9ca3af;
         }
 
         .footer-badge span {
             font-weight: 700;
-            color: var(--pfkk-burgundy);
+            color: var(--pfkk-gold);
         }
 
-        /* Налаштування ДРУКУ / PDF */
+        /* Налаштування ДРУКУ / PDF (Чорно-білий чистий варіант) */
         @media print {
             body {
-                background: white;
+                background: white !important;
+                color: black !important;
                 padding: 0;
             }
             .container {
                 max-width: 100%;
+                padding: 0;
             }
             .header-card {
-                background: none;
-                color: black;
+                background: none !important;
+                color: black !important;
                 padding: 0;
-                box-shadow: none;
-                border-bottom: 2px solid black;
+                box-shadow: none !important;
+                border: none !important;
+                border-bottom: 2px solid black !important;
                 border-radius: 0;
                 margin-bottom: 20px;
             }
-            .header-card h1 {
+            .college-badge {
+                border: none;
+                background: none;
+                padding: 0;
                 color: black;
+                font-size: 11px;
             }
-            .header-subtitle {
-                color: #333;
+            .specialty-title, .subject-title {
+                color: black !important;
+            }
+            .header-card h1 {
+                color: black !important;
+            }
+            .header-card p {
+                color: black !important;
             }
             .card {
-                box-shadow: none;
-                border: none;
+                background: none !important;
+                box-shadow: none !important;
+                border: none !important;
                 padding: 0;
                 margin-bottom: 20px;
             }
             .card h2 {
-                border-bottom: 1px solid black;
-                color: black;
+                border-bottom: 1px solid black !important;
+                color: black !important;
             }
             
-            /* Ховаємо підказки, кнопки та футер під час друку */
+            /* Ховаємо підказки, кнопки та футер при друку */
             .instruction, .btn-group, .footer-badge {
                 display: none !important;
             }
 
             input[type="text"], textarea {
-                border: none;
-                padding: 0;
-                background: transparent;
-                width: 100%;
-                font-size: 13px;
+                border: none !important;
+                padding: 0 !important;
+                background: transparent !important;
+                width: 100% !important;
+                font-size: 13px !important;
+                color: black !important;
             }
             label {
-                color: black;
+                color: black !important;
             }
         }
     </style>
@@ -256,9 +301,11 @@
 
 <div class="container">
     
-    <!-- Шапка з атрибутикою коледжу -->
+    <!-- Шапка з розширеною ієрархією -->
     <div class="header-card">
-        <div class="header-subtitle">Полтавський фаховий кооперативний коледж</div>
+        <div class="college-badge">Полтавський фаховий кооперативний коледж</div>
+        <div class="specialty-title">Спеціальність: 121 Інженерія програмного забезпечення</div>
+        <div class="subject-title">Дисципліна: Операційні системи</div>
         <h1>Звіт з практичної роботи №15</h1>
         <p><strong>Тема:</strong> Аналіз системного збою Cloudflare (DNS / BGP)</p>
     </div>
@@ -402,7 +449,7 @@
 
     <!-- Футер -->
     <div class="footer-badge">
-        Створено за допомогою <span>Gemini</span> для Полтавського фахового кооперативного коледжу
+        Створено для Полтавського фахового кооперативного коледжу
     </div>
 
 </div>
