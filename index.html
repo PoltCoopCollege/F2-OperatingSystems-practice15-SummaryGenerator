@@ -3,25 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Звіт з практичної роботи №15 — Cloudflare DNS/BGP</title>
+    <title>Звіт з практичної роботи №15 — ПФКК</title>
     <style>
         :root {
-            --primary: #2563eb;
-            --primary-hover: #1d4ed8;
-            --bg: #f1f5f9;
+            /* Фірмова палітра ПФКК */
+            --pfkk-burgundy: #4a151b;
+            --pfkk-burgundy-light: #5c1920;
+            --pfkk-gold: #f3c868;
+            --pfkk-gold-hover: #e2b245;
+            --bg: #f8f6f6;
             --card-bg: #ffffff;
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --border: #e2e8f0;
-            --focus-ring: #93c5fd;
+            --text-main: #2b2b2b;
+            --text-muted: #666666;
+            --border: #e0d8d8;
+            --focus-ring: #f3c868;
+            --hint-bg: #fffbf0;
+            --hint-border: #f3c868;
+            --hint-text: #4a151b;
         }
 
         body {
-            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Segoe UI', Arial, sans-serif;
             background-color: var(--bg);
             color: var(--text-main);
             margin: 0;
-            padding: 40px 20px;
+            padding: 0 0 40px 0;
             display: flex;
             justify-content: center;
         }
@@ -31,26 +37,37 @@
             width: 100%;
         }
 
+        /* Шапка в стилі сайту ПФКК */
         .header-card {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            background-color: var(--pfkk-burgundy);
             color: white;
-            padding: 32px;
-            border-radius: 16px;
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            padding: 28px 32px;
+            border-radius: 0 0 16px 16px;
+            box-shadow: 0 4px 12px rgba(74, 21, 27, 0.2);
             margin-bottom: 24px;
+            border-bottom: 4px solid var(--pfkk-gold);
         }
 
         .header-card h1 {
-            margin: 0 0 10px 0;
+            margin: 0 0 8px 0;
             font-size: 24px;
             font-weight: 700;
+            color: var(--pfkk-gold);
         }
 
         .header-card p {
             margin: 0;
-            opacity: 0.85;
-            font-size: 14px;
-            line-height: 1.5;
+            opacity: 0.95;
+            font-size: 15px;
+            line-height: 1.4;
+        }
+
+        .header-subtitle {
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #d1b8b8;
+            margin-bottom: 6px;
         }
 
         /* Стилі карток-секцій */
@@ -58,7 +75,7 @@
             background: var(--card-bg);
             padding: 24px 28px;
             border-radius: 12px;
-            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
             border: 1px solid var(--border);
             margin-bottom: 20px;
         }
@@ -67,13 +84,13 @@
             margin-top: 0;
             margin-bottom: 18px;
             font-size: 17px;
-            color: #1e293b;
-            border-bottom: 2px solid #f1f5f9;
-            padding-bottom: 10px;
+            color: var(--pfkk-burgundy);
+            border-bottom: 2px solid var(--pfkk-gold);
+            padding-bottom: 8px;
         }
 
         .form-group {
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
 
         .form-group:last-child {
@@ -82,12 +99,24 @@
 
         label {
             display: block;
-            font-weight: 600;
+            font-weight: 700;
             font-size: 13px;
-            color: var(--text-muted);
+            color: var(--pfkk-burgundy);
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-bottom: 6px;
+        }
+
+        /* Блок підказок (приховується при друку) */
+        .instruction {
+            background-color: var(--hint-bg);
+            border-left: 4px solid var(--hint-border);
+            padding: 10px 14px;
+            border-radius: 0 6px 6px 0;
+            font-size: 13px;
+            color: var(--hint-text);
+            margin-bottom: 10px;
+            line-height: 1.4;
         }
 
         input[type="text"], textarea {
@@ -98,7 +127,7 @@
             box-sizing: border-box;
             font-size: 14px;
             color: var(--text-main);
-            background-color: #f8fafc;
+            background-color: #faf8f8;
             transition: all 0.2s ease;
             font-family: inherit;
         }
@@ -106,13 +135,13 @@
         input[type="text"]:focus, textarea:focus {
             outline: none;
             background-color: #ffffff;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px var(--focus-ring);
+            border-color: var(--pfkk-gold);
+            box-shadow: 0 0 0 3px rgba(243, 200, 104, 0.4);
         }
 
         textarea {
             resize: vertical;
-            min-height: 90px;
+            min-height: 100px;
         }
 
         .grid-2 {
@@ -123,9 +152,10 @@
 
         @media (max-width: 640px) {
             .grid-2 { grid-template-columns: 1fr; }
+            body { padding: 0 10px 20px 10px; }
         }
 
-        /* Кнопка друку */
+        /* Кнопка друку у стилі фірмового золота ПФКК */
         .btn-group {
             display: flex;
             margin-top: 32px;
@@ -136,23 +166,24 @@
         button {
             padding: 14px 32px;
             border: none;
-            border-radius: 10px;
-            font-weight: 600;
+            border-radius: 8px;
+            font-weight: 700;
             font-size: 16px;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
             gap: 10px;
-            background-color: var(--primary);
-            color: white;
+            background-color: var(--pfkk-burgundy);
+            color: var(--pfkk-gold);
+            border: 1px solid var(--pfkk-gold);
             transition: all 0.2s ease;
-            box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2);
+            box-shadow: 0 4px 10px rgba(74, 21, 27, 0.25);
         }
 
         button:hover {
-            background-color: var(--primary-hover);
+            background-color: var(--pfkk-burgundy-light);
+            color: #ffffff;
             transform: translateY(-1px);
-            box-shadow: 0 6px 12px -2px rgba(37, 99, 235, 0.3);
         }
 
         /* Підвал */
@@ -164,13 +195,11 @@
         }
 
         .footer-badge span {
-            font-weight: 600;
-            background: linear-gradient(135deg, #2563eb, #9333ea);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-weight: 700;
+            color: var(--pfkk-burgundy);
         }
 
-        /* Налаштування стилів ДРУКУ / PDF */
+        /* Налаштування ДРУКУ / PDF */
         @media print {
             body {
                 background: white;
@@ -188,19 +217,28 @@
                 border-radius: 0;
                 margin-bottom: 20px;
             }
+            .header-card h1 {
+                color: black;
+            }
+            .header-subtitle {
+                color: #333;
+            }
             .card {
                 box-shadow: none;
                 border: none;
                 padding: 0;
-                margin-bottom: 24px;
+                margin-bottom: 20px;
             }
             .card h2 {
                 border-bottom: 1px solid black;
                 color: black;
             }
-            .btn-group, .footer-badge {
+            
+            /* Ховаємо підказки, кнопки та футер під час друку */
+            .instruction, .btn-group, .footer-badge {
                 display: none !important;
             }
+
             input[type="text"], textarea {
                 border: none;
                 padding: 0;
@@ -218,8 +256,9 @@
 
 <div class="container">
     
-    <!-- Шапка -->
+    <!-- Шапка з атрибутикою коледжу -->
     <div class="header-card">
+        <div class="header-subtitle">Полтавський фаховий кооперативний коледж</div>
         <h1>Звіт з практичної роботи №15</h1>
         <p><strong>Тема:</strong> Аналіз системного збою Cloudflare (DNS / BGP)</p>
     </div>
@@ -229,11 +268,11 @@
         <h2>👤 Загальна інформація</h2>
         <div class="grid-2">
             <div class="form-group">
-                <label>Студент (ПІБ)</label>
+                <label>Здобувач освіти (ПІБ)</label>
                 <input type="text" placeholder="Іванов Іван Іванович">
             </div>
             <div class="form-group">
-                <label>Академічна група</label>
+                <label>Навчальна група</label>
                 <input type="text" placeholder="ІПЗ-21">
             </div>
         </div>
@@ -243,12 +282,18 @@
     <div class="card">
         <h2>🔍 Завдання 1. Ідентифікація та Загальний Опис Інциденту</h2>
         <div class="form-group">
-            <label>Обраний інцидент (Дата, тривалість, причина)</label>
-            <input type="text" placeholder="Наприклад: 2 липня 2019 року, ~30 хв, BGP-витік через помилку провайдера">
+            <label>Обраний інцидент та його атрибути</label>
+            <div class="instruction">
+                💡 <strong>Що вказувати:</strong> Вкажіть точну дату інциденту, його тривалість (у хвилинах/годинах) та ключову технічну причину (наприклад: BGP Route Leak, помилка автоматичної конфігурації WAF/Software deployment).
+            </div>
+            <input type="text" placeholder="Приклад: 2 липня 2019 року, ~27 хвилин, BGP-витік через некоректний префікс провайдера">
         </div>
         <div class="form-group">
-            <label>Вплив на послуги та користувачів (DNS, CDN, WAF тощо)</label>
-            <textarea placeholder="Опишіть, які саме сервіси постраждали та який відсоток трафіку було втрачено..."></textarea>
+            <label>Вплив на послуги та користувачів</label>
+            <div class="instruction">
+                💡 <strong>Що вказувати:</strong> Які саме сервіси Cloudflare постраждали (DNS, CDN, WAF, Dashboard)? Який відсоток світового трафіку або які регіони зазнали збою?
+            </div>
+            <textarea placeholder="Введіть ваш аналіз впливу..."></textarea>
         </div>
     </div>
 
@@ -257,19 +302,31 @@
         <h2>🌐 Завдання 2. Аналіз з точки зору DNS (Прикладний рівень)</h2>
         <div class="form-group">
             <label>Початковий запит користувача</label>
-            <textarea placeholder="Що відбувається при вводі ім'я домену в браузері..."></textarea>
+            <div class="instruction">
+                💡 <strong>Що вказувати:</strong> Опишіть шлях DNS-запиту від браузера до авторитетного сервера Cloudflare при вводі домену.
+            </div>
+            <textarea placeholder="Введіть опис ланцюжка запиту..."></textarea>
         </div>
         <div class="form-group">
             <label>Роль DNS-резолвера</label>
-            <textarea placeholder="Як збій вплинув на рекурсивні DNS-сервери (8.8.8.8, ISP)..."></textarea>
+            <div class="instruction">
+                💡 <strong>Що вказувати:</strong> Що відбувалося, коли рекурсивні сервери (8.8.8.8, 1.1.1.1, ISP) намагалися отримати IP від недоступних авторитетних серверів Cloudflare?
+            </div>
+            <textarea placeholder="Введіть реакцію резолверів..."></textarea>
         </div>
         <div class="form-group">
-            <label>Помилка користувача (SERVFAIL / NXDOMAIN / Timeout)</label>
-            <textarea placeholder="Яку саме помилку бачив користувач та чому..."></textarea>
+            <label>Помилка користувача та її причини</label>
+            <div class="instruction">
+                💡 <strong>Що вказувати:</strong> Яку саме помилку видавав браузер (SERVFAIL, NXDOMAIN, Timeout)? Поясніть технічну різницю між ними у контексті цього збою.
+            </div>
+            <textarea placeholder="Введіть пояснення помилки..."></textarea>
         </div>
         <div class="form-group">
-            <label>TTL та кешування</label>
-            <textarea placeholder="Як TTL записів вплинув на тривалість проблеми..."></textarea>
+            <label>Вплив TTL та кешування</label>
+            <div class="instruction">
+                💡 <strong>Що вказувати:</strong> Як розмір TTL (Time To Live) вплинув на проблему? Чи допомогло кешування тим доменам, у яких був високий TTL?
+            </div>
+            <textarea placeholder="Введіть аналіз кешування та TTL..."></textarea>
         </div>
     </div>
 
@@ -279,24 +336,33 @@
         <div class="grid-2">
             <div class="form-group">
                 <label>AS-номер Cloudflare</label>
-                <input type="text" placeholder="AS13335">
+                <input type="text" placeholder="Наприклад: AS13335">
             </div>
             <div class="form-group">
                 <label>AS-номер винуватця / провайдера</label>
-                <input type="text" placeholder="Наприклад: AS39651 (MainStreet Bank) / AS1239 (Sprint)">
+                <input type="text" placeholder="Наприклад: AS39651 / AS1239">
             </div>
         </div>
         <div class="form-group" style="margin-top: 16px;">
             <label>BGP-оголошення та префікси</label>
-            <textarea placeholder="Поясніть поняття префіксу та як його помилкове оголошення перенаправило трафік..."></textarea>
+            <div class="instruction">
+                💡 <strong>Що вказувати:</strong> Що таке IP-префікс у BGP? Як більш специфічний префікс (наприклад, /24 замість /20) перехоплює трафік згідно з правилом Longest Prefix Match?
+            </div>
+            <textarea placeholder="Поясніть механіку BGP-оголошення..."></textarea>
         </div>
         <div class="form-group">
             <label>Концепція «Чорної діри» (Black Hole)</label>
-            <textarea placeholder="Чому трафік зникав без повернення помилки..."></textarea>
+            <div class="instruction">
+                💡 <strong>Що вказувати:</strong> Чому трафік, який потрапляв до мережі провайдера-винуватця, просто зникав (Drop), а не повертав помилку узгодження?
+            </div>
+            <textarea placeholder="Поясніть ефект Black Hole..."></textarea>
         </div>
         <div class="form-group">
-            <label>Локальний вплив та статичні маршрути</label>
-            <textarea placeholder="Чи міг інженер провайдера тимчасово прописати static route..."></textarea>
+            <label>Можливість використання Static Route</label>
+            <div class="instruction">
+                💡 <strong>Що вказувати:</strong> Чи міг локальний мережевий інженер обійти збій ручним статичним маршрутом? Обґрунтуйте чому "так" або "ні" (масштаб, Anycast).
+            </div>
+            <textarea placeholder="Обґрунтуйте можливість статичної маршрутизації..."></textarea>
         </div>
     </div>
 
@@ -304,16 +370,25 @@
     <div class="card">
         <h2>🛡️ Завдання 4. Запобігання та Висновки</h2>
         <div class="form-group">
-            <label>Реагування та усунення</label>
-            <textarea placeholder="Кроки, здійснені для відновлення працездатності..."></textarea>
+            <label>Усунення інциденту</label>
+            <div class="instruction">
+                💡 <strong>Що вказувати:</strong> Які екстрені дії були вжиті (відкликання BGP-оголошень, ручний відкат конфігурації, ізоляція провайдера)?
+            </div>
+            <textarea placeholder="Опишіть процеси відновлення..."></textarea>
         </div>
         <div class="form-group">
             <label>Запобігання (RPKI, BGP Route Filtering)</label>
-            <textarea placeholder="Механізми захисту від подібних витоків у майбутньому..."></textarea>
+            <div class="instruction">
+                💡 <strong>Що вказувати:</strong> Поясніть роль RPKI (Resource Public Key Infrastructure) та фільтрації префіксів у запобіганні BGP-витокам.
+            </div>
+            <textarea placeholder="Опишіть превентивні технології..."></textarea>
         </div>
         <div class="form-group">
-            <label>Загальний висновок</label>
-            <textarea placeholder="Висновок про важливість багатофакторної валідації змін у критичній інфраструктурі..."></textarea>
+            <label>Підсумковий висновок</label>
+            <div class="instruction">
+                💡 <strong>Що вказувати:</strong> Сформулюйте висновок щодо критичності валідації змін, ціни помилки в Anycast-мережах та значення глобальних стандартів безпеки маршрутизації.
+            </div>
+            <textarea placeholder="Сформулюйте підсумковий висновок..."></textarea>
         </div>
     </div>
 
@@ -327,7 +402,7 @@
 
     <!-- Футер -->
     <div class="footer-badge">
-        Створено за допомогою <span>Gemini</span>
+        Створено за допомогою <span>Gemini</span> для Полтавського фахового кооперативного коледжу
     </div>
 
 </div>
